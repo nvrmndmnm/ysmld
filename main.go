@@ -62,6 +62,14 @@ func main() {
 	}
 	defer quit()
 
+	dot := &Dot{
+		X:     26,
+		Y:     10,
+		Style: tcell.StyleDefault.Foreground(tcell.ColorRed),
+	}
+
+	dot.Draw(s)
+
 	for {
 		s.Show()
 
@@ -79,13 +87,19 @@ func main() {
 				s.Clear()
 			} else if ev.Rune() == 'H' || ev.Rune() == 'h' {
 				// move left
+				dot.X--
 			} else if ev.Rune() == 'J' || ev.Rune() == 'j' {
 				// move down
+				dot.Y++
 			} else if ev.Rune() == 'K' || ev.Rune() == 'k' {
 				// move up
+				dot.Y--
 			} else if ev.Rune() == 'L' || ev.Rune() == 'l' {
 				// move right
+				dot.X++
 			}
 		}
+		dot.Draw(s)
+		s.Show()
 	}
 }
