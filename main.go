@@ -6,6 +6,13 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
+const (
+	BoxLeft   = 10
+	BoxTop    = 1
+	BoxRight  = 42
+	BoxBottom = 20
+)
+
 func drawBox(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style) {
 	if y2 < y1 {
 		y1, y2 = y2, y1
@@ -51,7 +58,7 @@ func main() {
 	s.SetStyle(defStyle)
 	s.Clear()
 
-	drawBox(s, 10, 1, 42, 20, boxStyle)
+	drawBox(s, BoxLeft, BoxTop, BoxRight, BoxBottom, boxStyle)
 
 	quit := func() {
 		maybePanic := recover()
@@ -79,6 +86,9 @@ func main() {
 		case *tcell.EventResize:
 			s.Sync()
 		case *tcell.EventKey:
+
+			dot.Clear(s, boxStyle)
+
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
 				return
 			} else if ev.Key() == tcell.KeyCtrlL {
@@ -87,16 +97,24 @@ func main() {
 				s.Clear()
 			} else if ev.Rune() == 'H' || ev.Rune() == 'h' {
 				// move left
-				dot.X--
+				if dot.X-1 > BoxLeft {
+					dot.X--
+				}
 			} else if ev.Rune() == 'J' || ev.Rune() == 'j' {
 				// move down
-				dot.Y++
+				if dot.Y+1 < BoxBottom {
+					dot.Y++
+				}
 			} else if ev.Rune() == 'K' || ev.Rune() == 'k' {
 				// move up
-				dot.Y--
+				if dot.Y-1 > BoxTop {
+					dot.Y--
+				}
 			} else if ev.Rune() == 'L' || ev.Rune() == 'l' {
 				// move right
-				dot.X++
+				if dot.X+1 < BoxRight {
+					dot.X++
+				}
 			}
 		}
 		dot.Draw(s)
