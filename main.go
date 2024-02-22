@@ -77,6 +77,17 @@ func main() {
 
 	dot.Draw(s)
 
+	gameObject := &Object{
+		Pixels: []*Pixel{
+			{X: 15, Y: 15, Style: tcell.StyleDefault.Foreground(tcell.ColorRed)},
+			// {X: 16, Y: 15, Style: tcell.StyleDefault.Foreground(tcell.ColorRed)},
+			// {X: 15, Y: 16, Style: tcell.StyleDefault.Foreground(tcell.ColorRed)},
+			// {X: 16, Y: 16, Style: tcell.StyleDefault.Foreground(tcell.ColorRed)},
+		},
+	}
+
+	gameObject.Draw(s)
+
 	for {
 		s.Show()
 
