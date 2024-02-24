@@ -69,13 +69,8 @@ func main() {
 	}
 	defer quit()
 
-	dot := &Dot{
-		X:     26,
-		Y:     10,
-		Style: tcell.StyleDefault.Foreground(tcell.ColorRed),
-	}
-
-	dot.Draw(s)
+	tank := NewTank(11, 17)
+	tank.Draw(s)
 
 	gameObject := &Object{
 		Pixels: []*Pixel{
@@ -97,8 +92,7 @@ func main() {
 		case *tcell.EventResize:
 			s.Sync()
 		case *tcell.EventKey:
-
-			dot.Clear(s, boxStyle)
+			dx, dy := 0, 0
 
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
 				return
@@ -108,27 +102,32 @@ func main() {
 				s.Clear()
 			} else if ev.Rune() == 'H' || ev.Rune() == 'h' {
 				// move left
-				if dot.X-1 > BoxLeft {
-					dot.X--
+				if tank.Pixels[0].X-1 > BoxLeft {
+					dx = -1
 				}
 			} else if ev.Rune() == 'J' || ev.Rune() == 'j' {
 				// move down
-				if dot.Y+1 < BoxBottom {
-					dot.Y++
+				if tank.Pixels[len(tank.Pixels)-1].Y+1 < BoxBottom {
+					dy = 1
 				}
 			} else if ev.Rune() == 'K' || ev.Rune() == 'k' {
 				// move up
-				if dot.Y-1 > BoxTop {
-					dot.Y--
+				if tank.Pixels[0].Y-1 > BoxTop {
+					dy = -1
 				}
 			} else if ev.Rune() == 'L' || ev.Rune() == 'l' {
 				// move right
-				if dot.X+1 < BoxRight {
-					dot.X++
+				if tank.Pixels[len(tank.Pixels)-1].X+1 < BoxRight {
+					dx = 1
 				}
 			}
+			tank.Move(dx, dy)
+			tank.ClearPrevious(s, boxStyle, dx, dy)
+
+			tank.Draw(s)
+
+			s.Show()
 		}
-		dot.Draw(s)
-		s.Show()
+
 	}
 }
