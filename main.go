@@ -121,9 +121,9 @@ func main() {
 					dx = 1
 				}
 			}
-			tank.Move(dx, dy)
-			tank.ClearPrevious(s, boxStyle, dx, dy)
 
+			tank.ClearPrevious(s, boxStyle, dx, dy)
+			tank.Move(dx, dy)
 			tank.Draw(s)
 
 			s.Show()

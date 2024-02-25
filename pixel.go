@@ -22,3 +22,9 @@ func (g *Object) Draw(s tcell.Screen) {
 		pixel.Draw(s)
 	}
 }
+
+func (g *Object) ClearPrevious(s tcell.Screen, style tcell.Style, dx, dy int) {
+    for _, pixel := range g.Pixels {
+        s.SetContent(pixel.X-dx, pixel.Y-dy, ' ', nil, style)
+    }
+}

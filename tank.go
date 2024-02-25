@@ -30,9 +30,3 @@ func (t *Tank) Move(dx, dy int) {
 		pixel.Y += dy
 	}
 }
-
-func (t *Tank) ClearPrevious(s tcell.Screen, style tcell.Style, dx, dy int) {
-	for _, pixel := range t.Pixels {
-		s.SetContent(pixel.X-dx, pixel.Y-dy+1, ' ', nil, style)
-	}
-}
