@@ -102,22 +102,50 @@ func main() {
 				s.Clear()
 			} else if ev.Rune() == 'H' || ev.Rune() == 'h' {
 				// move left
-				if tank.Pixels[0].X-1 > BoxLeft {
+				canMove := true
+				for _, pixel := range tank.Pixels {
+					if pixel.X-1 <= BoxLeft {
+						canMove = false
+						break
+					}
+				}
+				if canMove {
 					dx = -1
 				}
 			} else if ev.Rune() == 'J' || ev.Rune() == 'j' {
 				// move down
-				if tank.Pixels[len(tank.Pixels)-1].Y+1 < BoxBottom {
+				canMove := true
+				for _, pixel := range tank.Pixels {
+					if pixel.Y+1 >= BoxBottom {
+						canMove = false
+						break
+					}
+				}
+				if canMove {
 					dy = 1
 				}
 			} else if ev.Rune() == 'K' || ev.Rune() == 'k' {
 				// move up
-				if tank.Pixels[0].Y-1 > BoxTop {
+				canMove := true
+				for _, pixel := range tank.Pixels {
+					if pixel.Y-1 <= BoxTop {
+						canMove = false
+						break
+					}
+				}
+				if canMove {
 					dy = -1
 				}
 			} else if ev.Rune() == 'L' || ev.Rune() == 'l' {
 				// move right
-				if tank.Pixels[len(tank.Pixels)-1].X+1 < BoxRight {
+				canMove := true
+				for _, pixel := range tank.Pixels {
+					if pixel.X+2 >= BoxRight {
+						canMove = false
+						break
+					}
+				}
+				if canMove {
 					dx = 1
 				}
 			}
