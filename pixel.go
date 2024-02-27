@@ -1,6 +1,8 @@
 package main
 
-import "github.com/gdamore/tcell/v2"
+import (
+	"github.com/gdamore/tcell/v2"
+)
 
 type Pixel struct {
 	X     int
@@ -24,7 +26,12 @@ func (g *Object) Draw(s tcell.Screen) {
 }
 
 func (g *Object) ClearPrevious(s tcell.Screen, style tcell.Style, dx, dy int) {
-    for _, pixel := range g.Pixels {
-        s.SetContent(pixel.X-dx, pixel.Y-dy, ' ', nil, style)
-    }
+	for _, pixel := range g.Pixels {
+		if dx >= 0 {
+			s.SetContent(pixel.X+1-dx, pixel.Y-dy, ' ', nil, style)
+		}
+		if dx < 0 {
+			s.SetContent(pixel.X-dx, pixel.Y-dy, ' ', nil, style)
+		}
+	}
 }
