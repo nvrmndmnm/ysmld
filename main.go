@@ -140,7 +140,7 @@ func main() {
 				// move right
 				canMove := true
 				for _, pixel := range tank.Pixels {
-					if pixel.X+2 >= BoxRight {
+					if pixel.X+1 >= BoxRight {
 						canMove = false
 						break
 					}

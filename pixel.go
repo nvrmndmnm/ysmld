@@ -10,9 +10,8 @@ type Pixel struct {
 	Style tcell.Style
 }
 
-func (p *Pixel) Draw(s tcell.Screen) {
+func (p *Pixel) Draw(s tcell.Screen, i int) {
 	s.SetContent(p.X, p.Y, '\u2588', nil, p.Style)
-	s.SetContent(p.X+1, p.Y, '\u2588', nil, p.Style)
 }
 
 type Object struct {
@@ -20,18 +19,26 @@ type Object struct {
 }
 
 func (g *Object) Draw(s tcell.Screen) {
-	for _, pixel := range g.Pixels {
-		pixel.Draw(s)
+	for i, pixel := range g.Pixels {
+		pixel.Draw(s, i)
 	}
 }
 
 func (g *Object) ClearPrevious(s tcell.Screen, style tcell.Style, dx, dy int) {
+	if dx > 0 {
+		dx -= 1
+	}
+	if dx < 0 {
+		dx += 1
+	}
+	if dy > 0 {
+		dy -= 1
+	}
+	if dy < 0 {
+		dy += 1
+	}
+
 	for _, pixel := range g.Pixels {
-		if dx >= 0 {
-			s.SetContent(pixel.X+1-dx, pixel.Y-dy, ' ', nil, style)
-		}
-		if dx < 0 {
-			s.SetContent(pixel.X-dx, pixel.Y-dy, ' ', nil, style)
-		}
+		s.SetContent(pixel.X-dx, pixel.Y-dy, ' ', nil, style)
 	}
 }

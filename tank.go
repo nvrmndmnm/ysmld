@@ -14,12 +14,14 @@ func NewTank(x, y int) *Tank {
 	turretStyle := tcell.StyleDefault.Foreground(tcell.ColorDarkKhaki)
 
 	for dy := 0; dy < 3; dy++ {
-		for dx := 0; dx < 5; dx++ {
+		for dx := 0; dx < 6; dx++ {
 			tank.Pixels = append(tank.Pixels, &Pixel{X: x + dx, Y: y + dy, Style: tankStyle})
 		}
 	}
 
-	tank.Pixels = append(tank.Pixels, &Pixel{X: x + 2, Y: y - 1, Style: turretStyle})
+	tank.Pixels = append(tank.Pixels,
+		&Pixel{X: x + 2, Y: y - 1, Style: turretStyle},
+		&Pixel{X: x + 3, Y: y - 1, Style: turretStyle})
 
 	return tank
 }
