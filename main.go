@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 )
@@ -28,19 +29,19 @@ func drawBox(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style) {
 	}
 
 	for col := x1; col <= x2; col++ {
-		s.SetContent(col, y1, tcell.RuneHLine, nil, style)
-		s.SetContent(col, y2, tcell.RuneHLine, nil, style)
+		s.SetContent(col, y1, ' ', nil, style)
+		s.SetContent(col, y2, ' ', nil, style)
 	}
 	for row := y1 + 1; row < y2; row++ {
-		s.SetContent(x1, row, tcell.RuneVLine, nil, style)
-		s.SetContent(x2, row, tcell.RuneVLine, nil, style)
+		s.SetContent(x1, row, ' ', nil, style)
+		s.SetContent(x2, row, ' ', nil, style)
 	}
 
 	if y1 != y2 && x1 != x2 {
-		s.SetContent(x1, y1, tcell.RuneULCorner, nil, style)
-		s.SetContent(x2, y1, tcell.RuneURCorner, nil, style)
-		s.SetContent(x1, y2, tcell.RuneLLCorner, nil, style)
-		s.SetContent(x2, y2, tcell.RuneLRCorner, nil, style)
+		s.SetContent(x1, y1, ' ', nil, style)
+		s.SetContent(x2, y1, ' ', nil, style)
+		s.SetContent(x1, y2, ' ', nil, style)
+		s.SetContent(x2, y2, ' ', nil, style)
 	}
 }
 
@@ -71,6 +72,7 @@ func main() {
 
 	tank := NewTank(11, 17)
 	tank.Draw(s)
+	var projectile *Projectile
 
 	gameObject := &Object{
 		Pixels: []*Pixel{
@@ -83,79 +85,104 @@ func main() {
 
 	gameObject.Draw(s)
 
-	for {
-		s.Show()
+	quitCh := make(chan struct{})
 
-		ev := s.PollEvent()
+	go func() {
+		for {
+			s.Show()
 
-		switch ev := ev.(type) {
-		case *tcell.EventResize:
-			s.Sync()
-		case *tcell.EventKey:
-			dx, dy := 0, 0
+			ev := s.PollEvent()
 
-			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
-				return
-			} else if ev.Key() == tcell.KeyCtrlL {
+			switch ev := ev.(type) {
+			case *tcell.EventResize:
 				s.Sync()
-			} else if ev.Rune() == 'C' || ev.Rune() == 'c' {
-				s.Clear()
-			} else if ev.Rune() == 'H' || ev.Rune() == 'h' {
-				// move left
-				canMove := true
-				for _, pixel := range tank.Pixels {
-					if pixel.X-1 <= BoxLeft {
-						canMove = false
-						break
+			case *tcell.EventKey:
+				dx, dy := 0, 0
+
+				if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
+					close(quitCh)
+					return
+				} else if ev.Key() == tcell.KeyCtrlL {
+					s.Sync()
+				} else if ev.Rune() == 'C' || ev.Rune() == 'c' {
+					s.Clear()
+				} else if ev.Rune() == 'H' || ev.Rune() == 'h' {
+					// move left
+					canMove := true
+					for _, pixel := range tank.Pixels {
+						if pixel.X-1 <= BoxLeft {
+							canMove = false
+							break
+						}
 					}
-				}
-				if canMove {
-					dx = -1
-				}
-			} else if ev.Rune() == 'J' || ev.Rune() == 'j' {
-				// move down
-				canMove := true
-				for _, pixel := range tank.Pixels {
-					if pixel.Y+1 >= BoxBottom {
-						canMove = false
-						break
+					if canMove {
+						dx = -1
 					}
-				}
-				if canMove {
-					dy = 1
-				}
-			} else if ev.Rune() == 'K' || ev.Rune() == 'k' {
-				// move up
-				canMove := true
-				for _, pixel := range tank.Pixels {
-					if pixel.Y-1 <= BoxTop {
-						canMove = false
-						break
+				} else if ev.Rune() == 'J' || ev.Rune() == 'j' {
+					// move down
+					canMove := true
+					for _, pixel := range tank.Pixels {
+						if pixel.Y+1 >= BoxBottom {
+							canMove = false
+							break
+						}
 					}
-				}
-				if canMove {
-					dy = -1
-				}
-			} else if ev.Rune() == 'L' || ev.Rune() == 'l' {
-				// move right
-				canMove := true
-				for _, pixel := range tank.Pixels {
-					if pixel.X+1 >= BoxRight {
-						canMove = false
-						break
+					if canMove {
+						dy = 1
 					}
+				} else if ev.Rune() == 'K' || ev.Rune() == 'k' {
+					// move up
+					canMove := true
+					for _, pixel := range tank.Pixels {
+						if pixel.Y-1 <= BoxTop {
+							canMove = false
+							break
+						}
+					}
+					if canMove {
+						dy = -1
+					}
+				} else if ev.Rune() == 'L' || ev.Rune() == 'l' {
+					// move right
+					canMove := true
+					for _, pixel := range tank.Pixels {
+						if pixel.X+1 >= BoxRight {
+							canMove = false
+							break
+						}
+					}
+					if canMove {
+						dx = 1
+					}
+				} else if ev.Rune() == ' ' {
+					// shoot
+					projectile = tank.Shoot()
 				}
-				if canMove {
-					dx = 1
-				}
+
+				tank.ClearPrevious(s, boxStyle, dx, dy)
+				tank.Move(dx, dy)
+				tank.Draw(s)
+
+				s.Show()
 			}
 
-			tank.ClearPrevious(s, boxStyle, dx, dy)
-			tank.Move(dx, dy)
-			tank.Draw(s)
+		}
+	}()
 
+	ticker := time.NewTicker(time.Second)
+	for {
+		select {
+		case <-quitCh:
+			ticker.Stop()
+			return
+		case <-ticker.C:
+			if projectile != nil {
+				projectile.ClearPrevious(s, boxStyle, 0, 1)
+				projectile.Move()
+				projectile.Draw(s)
+			}
+			tank.Draw(s)
 			s.Show()
 		}
-
 	}
 }

@@ -33,19 +33,23 @@ func (t *Tank) moveTurret(x, y int, style tcell.Style) {
 	case "up":
 		t.Pixels = append(t.Pixels,
 			&Pixel{X: x + 2, Y: y - 1, Style: style},
-			&Pixel{X: x + 3, Y: y - 1, Style: style})
+			&Pixel{X: x + 3, Y: y - 1, Style: style},
+		)
 	case "down":
 		t.Pixels = append(t.Pixels,
 			&Pixel{X: x + 2, Y: y + 3, Style: style},
-			&Pixel{X: x + 3, Y: y + 3, Style: style})
+			&Pixel{X: x + 3, Y: y + 3, Style: style},
+		)
 	case "left":
 		t.Pixels = append(t.Pixels,
 			&Pixel{X: x - 1, Y: y + 1, Style: style},
-			&Pixel{X: x - 2, Y: y + 1, Style: style})
+			&Pixel{X: x - 2, Y: y + 1, Style: style},
+		)
 	case "right":
 		t.Pixels = append(t.Pixels,
 			&Pixel{X: x + 6, Y: y + 1, Style: style},
-			&Pixel{X: x + 7, Y: y + 1, Style: style})
+			&Pixel{X: x + 7, Y: y + 1, Style: style},
+		)
 	}
 }
 
@@ -66,4 +70,25 @@ func (t *Tank) Move(dx, dy int) {
 	}
 
 	t.moveTurret(t.Pixels[0].X, t.Pixels[0].Y, t.Pixels[0].Style)
+}
+
+func (t *Tank) Shoot() *Projectile {
+	var x, y int
+
+	switch t.Direction {
+	case "up":
+		x = t.Pixels[len(t.Pixels)-2].X
+		y = t.Pixels[len(t.Pixels)-2].Y - 1
+	case "down":
+		x = t.Pixels[len(t.Pixels)-1].X
+		y = t.Pixels[len(t.Pixels)-1].Y + 1
+	case "left":
+		x = t.Pixels[len(t.Pixels)-2].X - 1
+		y = t.Pixels[len(t.Pixels)-2].Y
+	case "right":
+		x = t.Pixels[len(t.Pixels)-1].X + 1
+		y = t.Pixels[len(t.Pixels)-1].Y
+	}
+
+	return NewProjectile(x, y, t.Direction)
 }
