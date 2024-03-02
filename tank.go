@@ -54,6 +54,7 @@ func (t *Tank) moveTurret(x, y int, style tcell.Style) {
 }
 
 func (t *Tank) Move(dx, dy int) {
+	//TODO apply box restriction
 	for _, pixel := range t.Pixels {
 		pixel.X += dx
 		pixel.Y += dy
