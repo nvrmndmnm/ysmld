@@ -141,7 +141,7 @@ func main() {
 		}
 	}()
 
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(300 * time.Millisecond)
 	for {
 		select {
 		case <-quitCh:

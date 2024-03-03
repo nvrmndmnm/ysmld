@@ -31,24 +31,32 @@ func (p *Projectile) Move() {
 		for _, pixel := range p.Pixels {
 			if pixel.Y > BoxTop {
 				pixel.Y--
+			} else {
+				p.Pixels = nil
 			}
 		}
 	case "down":
 		for _, pixel := range p.Pixels {
 			if pixel.Y < BoxBottom {
 				pixel.Y++
+			} else {
+				p.Pixels = nil
 			}
 		}
 	case "left":
 		for _, pixel := range p.Pixels {
 			if pixel.X > BoxLeft {
 				pixel.X--
+			} else {
+				p.Pixels = nil
 			}
 		}
 	case "right":
 		for _, pixel := range p.Pixels {
 			if pixel.X < BoxRight {
 				pixel.X++
+			} else {
+				p.Pixels = nil
 			}
 		}
 	}
