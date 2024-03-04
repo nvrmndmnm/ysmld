@@ -148,6 +148,8 @@ func main() {
 			ticker.Stop()
 			return
 		case <-ticker.C:
+			tank.ShotsFired++
+
 			if projectile != nil {
 				projectile.ClearPrevious(s, boxStyle, 0, 1)
 				projectile.Move()

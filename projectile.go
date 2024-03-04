@@ -46,7 +46,7 @@ func (p *Projectile) Move() {
 	case "left":
 		for _, pixel := range p.Pixels {
 			if pixel.X > BoxLeft {
-				pixel.X--
+				pixel.X -= 2
 			} else {
 				p.Pixels = nil
 			}
@@ -54,7 +54,7 @@ func (p *Projectile) Move() {
 	case "right":
 		for _, pixel := range p.Pixels {
 			if pixel.X < BoxRight {
-				pixel.X++
+				pixel.X += 2
 			} else {
 				p.Pixels = nil
 			}

@@ -4,11 +4,16 @@ import "github.com/gdamore/tcell/v2"
 
 type Tank struct {
 	Object
-	Direction string
+	Direction  string
+	ShotsFired int
+	Cooldown   int
 }
 
 func NewTank(x, y int) *Tank {
-	tank := &Tank{Direction: "up"}
+	tank := &Tank{Direction: "up",
+		ShotsFired: 0,
+		Cooldown:   5,
+	}
 
 	tankStyle := tcell.StyleDefault.Foreground(tcell.ColorDarkGreen)
 	turretStyle := tcell.StyleDefault.Foreground(tcell.ColorDarkKhaki)
@@ -74,6 +79,11 @@ func (t *Tank) Move(dx, dy int) {
 }
 
 func (t *Tank) Shoot() *Projectile {
+	if t.ShotsFired < t.Cooldown {
+		return nil
+	}
+	t.ShotsFired = 0
+
 	var x, y int
 
 	switch t.Direction {
