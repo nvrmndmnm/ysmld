@@ -4,16 +4,16 @@ import "github.com/gdamore/tcell/v2"
 
 type Projectile struct {
 	Object
-	Direction string
 }
 
-func NewProjectile(x, y int, direction string) *Projectile {
-	projectile := &Projectile{Direction: direction}
-
+func NewProjectile(x, y int, direction Direction) *Projectile {
+	projectile := &Projectile{}
+	projectile.Direction = direction
+	
 	projectileStyle := tcell.StyleDefault.Foreground(tcell.ColorRed)
 
 	x2 := x - 1
-	if direction == "up" {
+	if direction == Up {
 		x2 = x + 1
 	}
 
@@ -27,7 +27,7 @@ func NewProjectile(x, y int, direction string) *Projectile {
 
 func (p *Projectile) Move() {
 	switch p.Direction {
-	case "up":
+	case Up:
 		for _, pixel := range p.Pixels {
 			if pixel.Y > BoxTop {
 				pixel.Y--
@@ -35,7 +35,7 @@ func (p *Projectile) Move() {
 				p.Pixels = nil
 			}
 		}
-	case "down":
+	case Down:
 		for _, pixel := range p.Pixels {
 			if pixel.Y < BoxBottom {
 				pixel.Y++
@@ -43,7 +43,7 @@ func (p *Projectile) Move() {
 				p.Pixels = nil
 			}
 		}
-	case "left":
+	case Left:
 		for _, pixel := range p.Pixels {
 			if pixel.X > BoxLeft {
 				pixel.X -= 2
@@ -51,7 +51,7 @@ func (p *Projectile) Move() {
 				p.Pixels = nil
 			}
 		}
-	case "right":
+	case Right:
 		for _, pixel := range p.Pixels {
 			if pixel.X < BoxRight {
 				pixel.X += 2

@@ -7,11 +7,23 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
+type Direction int
+
 const (
-	BoxLeft   = 10
-	BoxTop    = 1
-	BoxRight  = 42
-	BoxBottom = 20
+	Up = iota
+	Down
+	Left
+	Right
+)
+
+const (
+	BoxLeft         = 10
+	BoxTop          = 1
+	BoxRight        = 42
+	BoxBottom       = 20
+	ProjectileSpeed = 300
+	ShootCooldown   = 5
+	MaxProjectiles  = 5
 )
 
 func drawBox(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style) {
@@ -72,7 +84,7 @@ func main() {
 
 	tank := NewTank(11, 17)
 	tank.Draw(s)
-	var projectile *Projectile
+	projectiles := make(chan *Projectile, MaxProjectiles)
 
 	gameObject := &Object{
 		Pixels: []*Pixel{
@@ -128,7 +140,16 @@ func main() {
 					}
 				} else if ev.Rune() == ' ' {
 					// shoot
-					projectile = tank.Shoot()
+					projectile := tank.Shoot()
+
+					if projectile != nil {
+						select {
+						case projectiles <- projectile:
+							tank.ShotsFired++
+						default:
+							projectile = nil
+						}
+					}
 				}
 
 				tank.ClearPrevious(s, boxStyle, dx, dy)
@@ -141,19 +162,21 @@ func main() {
 		}
 	}()
 
-	ticker := time.NewTicker(300 * time.Millisecond)
+	ticker := time.NewTicker(ProjectileSpeed * time.Millisecond)
 	for {
 		select {
 		case <-quitCh:
 			ticker.Stop()
 			return
 		case <-ticker.C:
-			tank.ShotsFired++
-
-			if projectile != nil {
+			for len(projectiles) > 0 {
+				projectile := <-projectiles
 				projectile.ClearPrevious(s, boxStyle, 0, 1)
 				projectile.Move()
 				projectile.Draw(s)
+
+				// Re-enqueue the projectile
+				projectiles <- projectile
 			}
 			tank.Draw(s)
 			s.Show()

@@ -4,17 +4,16 @@ import "github.com/gdamore/tcell/v2"
 
 type Tank struct {
 	Object
-	Direction  string
 	ShotsFired int
 	Cooldown   int
 }
 
 func NewTank(x, y int) *Tank {
-	tank := &Tank{Direction: "up",
+	tank := &Tank{
 		ShotsFired: 0,
-		Cooldown:   5,
+		Cooldown:   ShootCooldown,
 	}
-
+	tank.Direction = Up
 	tankStyle := tcell.StyleDefault.Foreground(tcell.ColorDarkGreen)
 	turretStyle := tcell.StyleDefault.Foreground(tcell.ColorDarkKhaki)
 
@@ -35,22 +34,22 @@ func (t *Tank) moveTurret(x, y int, style tcell.Style) {
 	}
 
 	switch t.Direction {
-	case "up":
+	case Up:
 		t.Pixels = append(t.Pixels,
 			&Pixel{X: x + 2, Y: y - 1, Style: style},
 			&Pixel{X: x + 3, Y: y - 1, Style: style},
 		)
-	case "down":
+	case Down:
 		t.Pixels = append(t.Pixels,
 			&Pixel{X: x + 2, Y: y + 3, Style: style},
 			&Pixel{X: x + 3, Y: y + 3, Style: style},
 		)
-	case "left":
+	case Left:
 		t.Pixels = append(t.Pixels,
 			&Pixel{X: x - 1, Y: y + 1, Style: style},
 			&Pixel{X: x - 2, Y: y + 1, Style: style},
 		)
-	case "right":
+	case Right:
 		t.Pixels = append(t.Pixels,
 			&Pixel{X: x + 6, Y: y + 1, Style: style},
 			&Pixel{X: x + 7, Y: y + 1, Style: style},
@@ -66,13 +65,13 @@ func (t *Tank) Move(dx, dy int) {
 	}
 
 	if dx > 0 {
-		t.Direction = "right"
+		t.Direction = Right
 	} else if dx < 0 {
-		t.Direction = "left"
+		t.Direction = Left
 	} else if dy > 0 {
-		t.Direction = "down"
+		t.Direction = Down
 	} else if dy < 0 {
-		t.Direction = "up"
+		t.Direction = Up
 	}
 
 	t.moveTurret(t.Pixels[0].X, t.Pixels[0].Y, t.Pixels[0].Style)
@@ -87,16 +86,16 @@ func (t *Tank) Shoot() *Projectile {
 	var x, y int
 
 	switch t.Direction {
-	case "up":
+	case Up:
 		x = t.Pixels[len(t.Pixels)-2].X
 		y = t.Pixels[len(t.Pixels)-2].Y - 1
-	case "down":
+	case Down:
 		x = t.Pixels[len(t.Pixels)-1].X
 		y = t.Pixels[len(t.Pixels)-1].Y + 1
-	case "left":
+	case Left:
 		x = t.Pixels[len(t.Pixels)-2].X - 1
 		y = t.Pixels[len(t.Pixels)-2].Y
-	case "right":
+	case Right:
 		x = t.Pixels[len(t.Pixels)-1].X + 1
 		y = t.Pixels[len(t.Pixels)-1].Y
 	}
