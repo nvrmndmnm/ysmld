@@ -15,7 +15,6 @@ func NewTank(x, y int) *Tank {
 	}
 	tank.Direction = Up
 	tankStyle := tcell.StyleDefault.Foreground(tcell.ColorDarkGreen)
-	turretStyle := tcell.StyleDefault.Foreground(tcell.ColorDarkKhaki)
 
 	for dy := 0; dy < 3; dy++ {
 		for dx := 0; dx < 6; dx++ {
@@ -23,7 +22,7 @@ func NewTank(x, y int) *Tank {
 		}
 	}
 
-	tank.moveTurret(x, y, turretStyle)
+	tank.moveTurret(x, y, tankStyle)
 
 	return tank
 }

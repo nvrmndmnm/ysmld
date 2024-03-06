@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -17,65 +16,30 @@ const (
 )
 
 const (
-	BoxLeft         = 10
-	BoxTop          = 1
-	BoxRight        = 42
-	BoxBottom       = 20
+	BoxLeft   = 10
+	BoxTop    = 1
+	BoxRight  = 42
+	BoxBottom = 20
+
+	ScoreboardLeft   = 50
+	ScoreboardTop    = 1
+	ScoreboardRight  = 72
+	ScoreboardBottom = 20
+
 	ProjectileSpeed = 300
 	ShootCooldown   = 5
 	MaxProjectiles  = 5
 )
 
-func drawBox(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style) {
-	if y2 < y1 {
-		y1, y2 = y2, y1
-	}
-	if x2 < x1 {
-		x1, x2 = x2, x1
-	}
-
-	for row := y1; row <= y2; row++ {
-		for col := x1; col <= x2; col++ {
-			s.SetContent(col, row, ' ', nil, style)
-		}
-	}
-
-	for col := x1; col <= x2; col++ {
-		s.SetContent(col, y1, ' ', nil, style)
-		s.SetContent(col, y2, ' ', nil, style)
-	}
-	for row := y1 + 1; row < y2; row++ {
-		s.SetContent(x1, row, ' ', nil, style)
-		s.SetContent(x2, row, ' ', nil, style)
-	}
-
-	if y1 != y2 && x1 != x2 {
-		s.SetContent(x1, y1, ' ', nil, style)
-		s.SetContent(x2, y1, ' ', nil, style)
-		s.SetContent(x1, y2, ' ', nil, style)
-		s.SetContent(x2, y2, ' ', nil, style)
-	}
-}
-
 func main() {
-	defStyle := tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
-	boxStyle := tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorBlack)
-
-	s, err := tcell.NewScreen()
-	if err != nil {
-		log.Fatalf("%+v", err)
-	}
-	if err := s.Init(); err != nil {
-		log.Fatalf("%+v", err)
-	}
-	s.SetStyle(defStyle)
-	s.Clear()
-
-	drawBox(s, BoxLeft, BoxTop, BoxRight, BoxBottom, boxStyle)
+	box := NewBox()
+	box.DrawBox(BoxLeft, BoxTop, BoxRight, BoxBottom)
+	box.DrawBox(ScoreboardLeft, ScoreboardTop, ScoreboardRight, ScoreboardBottom)
+	box.DisplayText("test\ntest")
 
 	quit := func() {
 		maybePanic := recover()
-		s.Fini()
+		box.Screen.Fini()
 		if maybePanic != nil {
 			panic(maybePanic)
 		}
@@ -83,7 +47,7 @@ func main() {
 	defer quit()
 
 	tank := NewTank(11, 17)
-	tank.Draw(s)
+	tank.Draw(box.Screen)
 	projectiles := make(chan *Projectile, MaxProjectiles)
 
 	gameObject := &Object{
@@ -95,19 +59,19 @@ func main() {
 		},
 	}
 
-	gameObject.Draw(s)
+	gameObject.Draw(box.Screen)
 
 	quitCh := make(chan struct{})
 
 	go func() {
 		for {
-			s.Show()
+			box.Screen.Show()
 
-			ev := s.PollEvent()
+			ev := box.Screen.PollEvent()
 
 			switch ev := ev.(type) {
 			case *tcell.EventResize:
-				s.Sync()
+				box.Screen.Sync()
 			case *tcell.EventKey:
 				dx, dy := 0, 0
 
@@ -115,29 +79,33 @@ func main() {
 					close(quitCh)
 					return
 				} else if ev.Key() == tcell.KeyCtrlL {
-					s.Sync()
+					box.Screen.Sync()
 				} else if ev.Rune() == 'C' || ev.Rune() == 'c' {
-					s.Clear()
+					box.Screen.Clear()
 				} else if ev.Rune() == 'H' || ev.Rune() == 'h' {
 					// move left
-					if tank.CanMove(-1, 0) {
-						dx = -1
-					}
+					tank.Direction = Left
+					// if tank.CanMove(-1, 0) {
+					dx = -1
+					// }
 				} else if ev.Rune() == 'J' || ev.Rune() == 'j' {
 					// move down
-					if tank.CanMove(0, 1) {
-						dy = 1
-					}
+					tank.Direction = Down
+					// if tank.CanMove(0, 1) {
+					dy = 1
+					// }
 				} else if ev.Rune() == 'K' || ev.Rune() == 'k' {
 					// move up
-					if tank.CanMove(0, -1) {
-						dy = -1
-					}
+					tank.Direction = Up
+					// if tank.CanMove(0, -1) {
+					dy = -1
+					// }
 				} else if ev.Rune() == 'L' || ev.Rune() == 'l' {
 					// move right
-					if tank.CanMove(1, 0) {
-						dx = 1
-					}
+					tank.Direction = Right
+					// if tank.CanMove(1, 0) {
+					dx = 1
+					// }
 				} else if ev.Rune() == ' ' {
 					// shoot
 					projectile := tank.Shoot()
@@ -152,11 +120,11 @@ func main() {
 					}
 				}
 
-				tank.ClearPrevious(s, boxStyle, dx, dy)
+				tank.ClearPrevious(box.Screen, box.Style)
 				tank.Move(dx, dy)
-				tank.Draw(s)
+				tank.Draw(box.Screen)
 
-				s.Show()
+				box.Screen.Show()
 			}
 
 		}
@@ -171,15 +139,15 @@ func main() {
 		case <-ticker.C:
 			for len(projectiles) > 0 {
 				projectile := <-projectiles
-				projectile.ClearPrevious(s, boxStyle, 0, 1)
+				projectile.ClearPrevious(box.Screen, box.Style)
 				projectile.Move()
-				projectile.Draw(s)
+				projectile.Draw(box.Screen)
 
 				// Re-enqueue the projectile
 				projectiles <- projectile
 			}
-			tank.Draw(s)
-			s.Show()
+			tank.Draw(box.Screen)
+			box.Screen.Show()
 		}
 	}
 }
