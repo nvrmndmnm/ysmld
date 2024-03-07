@@ -1,6 +1,8 @@
 package main
 
-import "github.com/gdamore/tcell/v2"
+import (
+	"github.com/gdamore/tcell/v2"
+)
 
 type Tank struct {
 	Object
@@ -22,7 +24,7 @@ func NewTank(x, y int) *Tank {
 		}
 	}
 
-	tank.moveTurret(x, y, tankStyle)
+	// tank.moveTurret(x, y, tankStyle)
 
 	return tank
 }
@@ -56,24 +58,47 @@ func (t *Tank) moveTurret(x, y int, style tcell.Style) {
 	}
 }
 
-func (t *Tank) Move(dx, dy int) {
+func (t *Tank) Move(box *Box) {
 	//TODO apply box restriction
+	tankStyle := tcell.StyleDefault.Foreground(tcell.ColorDarkGreen)
+
 	for _, pixel := range t.Pixels {
-		pixel.X += dx
-		pixel.Y += dy
+		dx := 0
+		dy := 0
+		switch t.Direction {
+		case Up:
+			dy = -1
+		case Down:
+			dy = 1
+		case Left:
+			dx = 1
+		case Right:
+			dx = -1
+		}
+
+		destX := pixel.X + dx
+		destY := pixel.Y + dy
+		if destX <= BoxLeft || destX >= BoxRight-5 || destY <= BoxTop || destY+2 >= BoxBottom {
+			break
+		}
+
+		box.Screen.SetContent(pixel.X, pixel.Y, ' ', nil, box.Style)
+		box.Screen.SetContent(destX, destY, '\u2588', nil, tankStyle)
+		// pixel.X = destX
+		// pixel.Y = destY
 	}
 
-	if dx > 0 {
-		t.Direction = Right
-	} else if dx < 0 {
-		t.Direction = Left
-	} else if dy > 0 {
-		t.Direction = Down
-	} else if dy < 0 {
-		t.Direction = Up
-	}
+	// if dx > 0 {
+	// 	t.Direction = Right
+	// } else if dx < 0 {
+	// 	t.Direction = Left
+	// } else if dy > 0 {
+	// 	t.Direction = Down
+	// } else if dy < 0 {
+	// 	t.Direction = Up
+	// }
 
-	t.moveTurret(t.Pixels[0].X, t.Pixels[0].Y, t.Pixels[0].Style)
+	// t.moveTurret(t.Pixels[0].X, t.Pixels[0].Y, t.Pixels[0].Style)
 }
 
 func (t *Tank) Shoot() *Projectile {

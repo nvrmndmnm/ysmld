@@ -66,6 +66,8 @@ func (box Box) DrawBox(x1, y1, x2, y2 int) {
 }
 
 func (box Box) DisplayText(str string) {
+	box.ClearScoreboard()
+
 	column := ScoreboardLeft + 1
 	row := ScoreboardTop
 	for _, r := range str {
@@ -74,6 +76,14 @@ func (box Box) DisplayText(str string) {
 		if r == '\n' {
 			column = ScoreboardLeft + 1
 			row++
+		}
+	}
+}
+
+func (box Box) ClearScoreboard() {
+	for y := ScoreboardTop; y < ScoreboardBottom; y++ {
+		for x := ScoreboardLeft; x < ScoreboardRight; x++ {
+			box.Screen.SetContent(x, y, ' ', nil, box.Style)
 		}
 	}
 }

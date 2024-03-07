@@ -50,17 +50,6 @@ func main() {
 	tank.Draw(box.Screen)
 	projectiles := make(chan *Projectile, MaxProjectiles)
 
-	gameObject := &Object{
-		Pixels: []*Pixel{
-			{X: 15, Y: 15, Style: tcell.StyleDefault.Foreground(tcell.ColorRed)},
-			// {X: 16, Y: 15, Style: tcell.StyleDefault.Foreground(tcell.ColorRed)},
-			// {X: 15, Y: 16, Style: tcell.StyleDefault.Foreground(tcell.ColorRed)},
-			// {X: 16, Y: 16, Style: tcell.StyleDefault.Foreground(tcell.ColorRed)},
-		},
-	}
-
-	gameObject.Draw(box.Screen)
-
 	quitCh := make(chan struct{})
 
 	go func() {
@@ -73,8 +62,6 @@ func main() {
 			case *tcell.EventResize:
 				box.Screen.Sync()
 			case *tcell.EventKey:
-				dx, dy := 0, 0
-
 				if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
 					close(quitCh)
 					return
@@ -85,27 +72,15 @@ func main() {
 				} else if ev.Rune() == 'H' || ev.Rune() == 'h' {
 					// move left
 					tank.Direction = Left
-					// if tank.CanMove(-1, 0) {
-					dx = -1
-					// }
 				} else if ev.Rune() == 'J' || ev.Rune() == 'j' {
 					// move down
 					tank.Direction = Down
-					// if tank.CanMove(0, 1) {
-					dy = 1
-					// }
 				} else if ev.Rune() == 'K' || ev.Rune() == 'k' {
 					// move up
 					tank.Direction = Up
-					// if tank.CanMove(0, -1) {
-					dy = -1
-					// }
 				} else if ev.Rune() == 'L' || ev.Rune() == 'l' {
 					// move right
 					tank.Direction = Right
-					// if tank.CanMove(1, 0) {
-					dx = 1
-					// }
 				} else if ev.Rune() == ' ' {
 					// shoot
 					projectile := tank.Shoot()
@@ -120,10 +95,8 @@ func main() {
 					}
 				}
 
-				tank.ClearPrevious(box.Screen, box.Style)
-				tank.Move(dx, dy)
+				tank.Move(box)
 				tank.Draw(box.Screen)
-
 				box.Screen.Show()
 			}
 
@@ -139,11 +112,9 @@ func main() {
 		case <-ticker.C:
 			for len(projectiles) > 0 {
 				projectile := <-projectiles
-				projectile.ClearPrevious(box.Screen, box.Style)
 				projectile.Move()
 				projectile.Draw(box.Screen)
 
-				// Re-enqueue the projectile
 				projectiles <- projectile
 			}
 			tank.Draw(box.Screen)
