@@ -59,44 +59,37 @@ func (t *Tank) moveTurret(x, y int, style tcell.Style) {
 }
 
 func (t *Tank) Move(box *Box) {
-	//TODO apply box restriction
 	tankStyle := tcell.StyleDefault.Foreground(tcell.ColorDarkGreen)
-
+	dx := 0
+	dy := 0
 	for _, pixel := range t.Pixels {
-		dx := 0
-		dy := 0
+
 		switch t.Direction {
 		case Up:
 			dy = -1
+			box.Screen.SetContent(pixel.X, pixel.Y+1, ' ', nil, box.Style)
+			box.Screen.SetContent(pixel.X+dx, pixel.Y+dy, '\u2588', nil, tankStyle)
 		case Down:
 			dy = 1
+			box.Screen.SetContent(pixel.X, pixel.Y-1, ' ', nil, box.Style)
+			box.Screen.SetContent(pixel.X+dx, pixel.Y+dy, '\u2588', nil, tankStyle)
 		case Left:
-			dx = 1
-		case Right:
 			dx = -1
-		}
+			box.Screen.SetContent(pixel.X+1, pixel.Y, ' ', nil, box.Style)
+			box.Screen.SetContent(pixel.X+dx, pixel.Y+dy, '\u2588', nil, tankStyle)
 
-		destX := pixel.X + dx
-		destY := pixel.Y + dy
-		if destX <= BoxLeft || destX >= BoxRight-5 || destY <= BoxTop || destY+2 >= BoxBottom {
-			break
-		}
+		case Right:
+			dx = 1
+			box.Screen.SetContent(pixel.X-1, pixel.Y, ' ', nil, box.Style)
+			box.Screen.SetContent(pixel.X+dx, pixel.Y+dy, '\u2588', nil, tankStyle)
 
-		box.Screen.SetContent(pixel.X, pixel.Y, ' ', nil, box.Style)
-		box.Screen.SetContent(destX, destY, '\u2588', nil, tankStyle)
-		// pixel.X = destX
-		// pixel.Y = destY
+		}
+		pixel.X += dx
+		pixel.Y += dy
+		// if pixel.X <= BoxLeft || pixel.X >= BoxRight-5 || pixel.Y <= BoxTop || pixel.Y+2 >= BoxBottom {
+		// break
+		// }
 	}
-
-	// if dx > 0 {
-	// 	t.Direction = Right
-	// } else if dx < 0 {
-	// 	t.Direction = Left
-	// } else if dy > 0 {
-	// 	t.Direction = Down
-	// } else if dy < 0 {
-	// 	t.Direction = Up
-	// }
 
 	// t.moveTurret(t.Pixels[0].X, t.Pixels[0].Y, t.Pixels[0].Style)
 }
