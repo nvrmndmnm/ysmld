@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -70,19 +71,22 @@ func main() {
 				} else if ev.Rune() == 'C' || ev.Rune() == 'c' {
 					box.Screen.Clear()
 				} else if ev.Rune() == 'H' || ev.Rune() == 'h' {
-					// move left
 					tank.Direction = Left
+					tank.Move(box)
+					tank.Draw(box.Screen)
 				} else if ev.Rune() == 'J' || ev.Rune() == 'j' {
-					// move down
 					tank.Direction = Down
+					tank.Move(box)
+					tank.Draw(box.Screen)
 				} else if ev.Rune() == 'K' || ev.Rune() == 'k' {
-					// move up
 					tank.Direction = Up
+					tank.Move(box)
+					tank.Draw(box.Screen)
 				} else if ev.Rune() == 'L' || ev.Rune() == 'l' {
-					// move right
 					tank.Direction = Right
+					tank.Move(box)
+					tank.Draw(box.Screen)
 				} else if ev.Rune() == ' ' {
-					// shoot
 					projectile := tank.Shoot()
 
 					if projectile != nil {
@@ -95,8 +99,6 @@ func main() {
 					}
 				}
 
-				tank.Move(box)
-				tank.Draw(box.Screen)
 				box.Screen.Show()
 			}
 
@@ -116,6 +118,7 @@ func main() {
 				projectile.Draw(box.Screen)
 
 				projectiles <- projectile
+				box.DisplayText(fmt.Sprint(len(projectiles)))
 			}
 			tank.Draw(box.Screen)
 			box.Screen.Show()
