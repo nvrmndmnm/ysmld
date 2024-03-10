@@ -73,19 +73,15 @@ func main() {
 				} else if ev.Rune() == 'H' || ev.Rune() == 'h' {
 					tank.Direction = Left
 					tank.Move(box)
-					tank.Draw(box.Screen)
 				} else if ev.Rune() == 'J' || ev.Rune() == 'j' {
 					tank.Direction = Down
 					tank.Move(box)
-					tank.Draw(box.Screen)
 				} else if ev.Rune() == 'K' || ev.Rune() == 'k' {
 					tank.Direction = Up
 					tank.Move(box)
-					tank.Draw(box.Screen)
 				} else if ev.Rune() == 'L' || ev.Rune() == 'l' {
 					tank.Direction = Right
 					tank.Move(box)
-					tank.Draw(box.Screen)
 				} else if ev.Rune() == ' ' {
 					projectile := tank.Shoot()
 
@@ -99,6 +95,7 @@ func main() {
 					}
 				}
 
+				tank.Draw(box.Screen)
 				box.Screen.Show()
 			}
 

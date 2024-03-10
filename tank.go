@@ -63,27 +63,20 @@ func (t *Tank) Move(box *Box) {
 	dx := 0
 	dy := 0
 	for _, pixel := range t.Pixels {
-
 		switch t.Direction {
 		case Up:
 			dy = -1
-			box.Screen.SetContent(pixel.X, pixel.Y+1, ' ', nil, box.Style)
-			box.Screen.SetContent(pixel.X+dx, pixel.Y+dy, '\u2588', nil, tankStyle)
 		case Down:
 			dy = 1
-			box.Screen.SetContent(pixel.X, pixel.Y-1, ' ', nil, box.Style)
-			box.Screen.SetContent(pixel.X+dx, pixel.Y+dy, '\u2588', nil, tankStyle)
 		case Left:
 			dx = -1
-			box.Screen.SetContent(pixel.X+1, pixel.Y, ' ', nil, box.Style)
-			box.Screen.SetContent(pixel.X+dx, pixel.Y+dy, '\u2588', nil, tankStyle)
-
 		case Right:
 			dx = 1
-			box.Screen.SetContent(pixel.X-1, pixel.Y, ' ', nil, box.Style)
-			box.Screen.SetContent(pixel.X+dx, pixel.Y+dy, '\u2588', nil, tankStyle)
-
 		}
+
+		box.Screen.SetContent(pixel.X-dx, pixel.Y-dy, ' ', nil, box.Style)
+		box.Screen.SetContent(pixel.X+dx, pixel.Y+dy, '\u2588', nil, tankStyle)
+
 		pixel.X += dx
 		pixel.Y += dy
 		// if pixel.X <= BoxLeft || pixel.X >= BoxRight-5 || pixel.Y <= BoxTop || pixel.Y+2 >= BoxBottom {
