@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -109,13 +108,12 @@ func main() {
 			ticker.Stop()
 			return
 		case <-ticker.C:
-			for len(projectiles) > 0 {
-				projectile := <-projectiles
-				projectile.Move()
-				projectile.Draw(box.Screen)
-
+			select {
+			case projectile := <-projectiles:
+				projectile.Move(box)
 				projectiles <- projectile
-				box.DisplayText(fmt.Sprint(len(projectiles)))
+			default:
+				box.DisplayText("no projectiles shat")
 			}
 			tank.Draw(box.Screen)
 			box.Screen.Show()

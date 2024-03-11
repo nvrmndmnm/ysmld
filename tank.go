@@ -88,7 +88,7 @@ func (t *Tank) Move(box *Box) {
 }
 
 func (t *Tank) Shoot() *Projectile {
-	if t.ShotsFired < t.Cooldown {
+	if t.ShotsFired > t.Cooldown {
 		return nil
 	}
 	t.ShotsFired = 0
