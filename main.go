@@ -108,13 +108,10 @@ func main() {
 			ticker.Stop()
 			return
 		case <-ticker.C:
-			select {
-			case projectile := <-projectiles:
-				projectile.Move(box)
-				projectiles <- projectile
-			default:
-				box.DisplayText("no projectiles shat")
-			}
+			projectile := <-projectiles
+			projectile.Move(box)
+			projectiles <- projectile
+
 			tank.Draw(box.Screen)
 			box.Screen.Show()
 		}

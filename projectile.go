@@ -43,7 +43,7 @@ func (p *Projectile) Move(box *Box) {
 		}
 
 		box.Screen.SetContent(pixel.X-dx, pixel.Y-dy, ' ', nil, box.Style)
-		box.Screen.SetContent(pixel.X+dx, pixel.Y+dy, '\u2588', nil, projectileStyle)
+		box.Screen.SetContent(pixel.X+dx, pixel.Y, '\u2588', nil, projectileStyle)
 
 		pixel.X += dx
 		pixel.Y += dy
