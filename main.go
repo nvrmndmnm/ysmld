@@ -109,8 +109,13 @@ func main() {
 			return
 		case <-ticker.C:
 			projectile := <-projectiles
-			projectile.Move(box)
-			projectiles <- projectile
+			if projectile.Pixels[0].Y >= BoxTop &&
+				projectile.Pixels[0].Y <= BoxBottom &&
+				projectile.Pixels[0].X >= BoxLeft &&
+				projectile.Pixels[1].X <= BoxRight {
+				projectile.Move(box)
+				projectiles <- projectile
+			}
 
 			tank.Draw(box.Screen)
 			box.Screen.Show()

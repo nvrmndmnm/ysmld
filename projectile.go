@@ -30,18 +30,18 @@ func (p *Projectile) Move(box *Box) {
 	dx := 0
 	dy := 0
 
-	for _, pixel := range p.Pixels {
-		switch p.Direction {
-		case Up:
-			dy = -1
-		case Down:
-			dy = 1
-		case Left:
-			dx = -1
-		case Right:
-			dx = 1
-		}
+	switch p.Direction {
+	case Up:
+		dy = -1
+	case Down:
+		dy = 1
+	case Left:
+		dx = -1
+	case Right:
+		dx = 1
+	}
 
+	for _, pixel := range p.Pixels {
 		box.Screen.SetContent(pixel.X-dx, pixel.Y-dy, ' ', nil, box.Style)
 		box.Screen.SetContent(pixel.X+dx, pixel.Y, '\u2588', nil, projectileStyle)
 
