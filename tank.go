@@ -62,16 +62,22 @@ func (t *Tank) Move(box *Box) {
 	tankStyle := tcell.StyleDefault.Foreground(tcell.ColorDarkGreen)
 	dx := 0
 	dy := 0
+
+	switch t.Direction {
+	case Up:
+		dy = -1
+	case Down:
+		dy = 1
+	case Left:
+		dx = -1
+	case Right:
+		dx = 1
+	}
+
 	for _, pixel := range t.Pixels {
-		switch t.Direction {
-		case Up:
-			dy = -1
-		case Down:
-			dy = 1
-		case Left:
-			dx = -1
-		case Right:
-			dx = 1
+
+		if pixel.X <= BoxLeft || pixel.X >= BoxRight-5 || pixel.Y <= BoxTop || pixel.Y+2 >= BoxBottom {
+			break
 		}
 
 		box.Screen.SetContent(pixel.X-dx, pixel.Y-dy, ' ', nil, box.Style)
@@ -79,9 +85,7 @@ func (t *Tank) Move(box *Box) {
 
 		pixel.X += dx
 		pixel.Y += dy
-		// if pixel.X <= BoxLeft || pixel.X >= BoxRight-5 || pixel.Y <= BoxTop || pixel.Y+2 >= BoxBottom {
-		// break
-		// }
+
 	}
 
 	// t.moveTurret(t.Pixels[0].X, t.Pixels[0].Y, t.Pixels[0].Style)
