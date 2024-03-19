@@ -106,17 +106,17 @@ func (t *Tank) Shoot() *Projectile {
 
 	switch t.Direction {
 	case Up:
-		x = t.Pixels[len(t.Pixels)-2].X
-		y = t.Pixels[len(t.Pixels)-2].Y - 1
+		x = t.Pixels[0].X + 2
+		y = t.Pixels[0].Y - 1
 	case Down:
-		x = t.Pixels[len(t.Pixels)-1].X
-		y = t.Pixels[len(t.Pixels)-1].Y + 1
+		x = t.Pixels[0].X + 3
+		y = t.Pixels[0].Y + 3
 	case Left:
-		x = t.Pixels[len(t.Pixels)-2].X - 1
-		y = t.Pixels[len(t.Pixels)-2].Y
+		x = t.Pixels[0].X
+		y = t.Pixels[0].Y + 1
 	case Right:
-		x = t.Pixels[len(t.Pixels)-1].X + 1
-		y = t.Pixels[len(t.Pixels)-1].Y
+		x = t.Pixels[0].X + 6
+		y = t.Pixels[0].Y + 1
 	}
 
 	return NewProjectile(x, y, t.Direction)
