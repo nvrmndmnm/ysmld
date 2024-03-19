@@ -24,7 +24,7 @@ func NewTank(x, y int) *Tank {
 		}
 	}
 
-	// tank.moveTurret(x, y, tankStyle)
+	tank.moveTurret(x, y, tankStyle)
 
 	return tank
 }
@@ -65,35 +65,35 @@ func (t *Tank) Move(box *Box) {
 	switch t.Direction {
 	case Up:
 		dy = -1
-		if t.Pixels[0].Y+dy <= BoxTop-1 {
+		if t.Pixels[0].Y+dy <= BoxTop {
 			return
 		}
 	case Down:
 		dy = 1
-		if t.Pixels[0].Y+dy >= BoxBottom-1 {
+		if t.Pixels[0].Y+dy >= BoxBottom-2 {
 			return
 		}
 	case Left:
 		dx = -1
-		if t.Pixels[0].X+dx <= BoxLeft {
+		if t.Pixels[0].X+dx <= BoxLeft+2 {
 			return
 		}
 	case Right:
 		dx = 1
-		if t.Pixels[0].X+dx >= BoxRight-5 {
+		if t.Pixels[0].X+dx >= BoxRight-7 {
 			return
 		}
 	}
 
 	for _, pixel := range t.Pixels {
-		box.Screen.SetContent(pixel.X-dx, pixel.Y, ' ', nil, box.Style)
+		box.Screen.SetContent(pixel.X, pixel.Y, ' ', nil, box.Style)
 
 		pixel.X += dx
 		pixel.Y += dy
 
 	}
 
-	// t.moveTurret(t.Pixels[0].X, t.Pixels[0].Y, t.Pixels[0].Style)
+	t.moveTurret(t.Pixels[0].X, t.Pixels[0].Y, t.Pixels[0].Style)
 }
 
 func (t *Tank) Shoot() *Projectile {
