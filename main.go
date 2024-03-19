@@ -101,27 +101,29 @@ func main() {
 		}
 	}()
 
+	var ammoRack []*Projectile
 	ticker := time.NewTicker(ProjectileSpeed * time.Millisecond)
 	for {
 		select {
-		case <-quitCh:
-			ticker.Stop()
-			return
+		case projectile := <-projectiles:
+			ammoRack = append(ammoRack, projectile)
 		case <-ticker.C:
-			select {
-			case projectile := <-projectiles:
-				if projectile.Pixels[0].Y >= BoxTop &&
-					projectile.Pixels[0].Y <= BoxBottom &&
-					projectile.Pixels[0].X >= BoxLeft &&
-					projectile.Pixels[1].X <= BoxRight {
-					projectile.Move(box)
-					projectiles <- projectile
+			for i := 0; i < len(ammoRack) && i < MaxProjectiles; i++ {
+				if ammoRack[i].Pixels[0].Y >= BoxTop &&
+					ammoRack[i].Pixels[0].Y <= BoxBottom &&
+					ammoRack[i].Pixels[0].X >= BoxLeft &&
+					ammoRack[i].Pixels[1].X <= BoxRight {
+					ammoRack[i].Move(box)
+				} else {
+					ammoRack = ammoRack[i:]
 				}
-			default:
-
 			}
 			tank.Draw(box.Screen)
 			box.Screen.Show()
+
+		case <-quitCh:
+			ticker.Stop()
+			return
 		}
 	}
 }
