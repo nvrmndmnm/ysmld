@@ -26,24 +26,34 @@ func NewProjectile(x, y int, direction Direction) *Projectile {
 }
 
 func (p *Projectile) Move(box *Box) {
-	projectileStyle := tcell.StyleDefault.Foreground(tcell.ColorRebeccaPurple)
 	dx := 0
 	dy := 0
 
 	switch p.Direction {
 	case Up:
 		dy = -1
+		if p.Pixels[0].Y < BoxTop {
+			return
+		}
 	case Down:
 		dy = 1
+		if p.Pixels[0].Y > BoxBottom {
+			return
+		}
 	case Left:
 		dx = -1
+		if p.Pixels[0].X < BoxLeft {
+			return
+		}
 	case Right:
 		dx = 1
+		if p.Pixels[1].X > BoxRight {
+			return
+		}
 	}
 
 	for _, pixel := range p.Pixels {
-		box.Screen.SetContent(pixel.X-dx, pixel.Y-dy, ' ', nil, box.Style)
-		box.Screen.SetContent(pixel.X+dx, pixel.Y, '\u2588', nil, projectileStyle)
+		box.Screen.SetContent(pixel.X, pixel.Y, ' ', nil, box.Style)
 
 		pixel.X += dx
 		pixel.Y += dy

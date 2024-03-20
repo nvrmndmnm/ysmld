@@ -114,6 +114,7 @@ func main() {
 					ammoRack[i].Pixels[0].X >= BoxLeft &&
 					ammoRack[i].Pixels[1].X <= BoxRight {
 					ammoRack[i].Move(box)
+					ammoRack[i].Draw(box.Screen)
 				} else {
 					ammoRack = ammoRack[i:]
 				}
