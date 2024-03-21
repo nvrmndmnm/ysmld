@@ -6,6 +6,7 @@ import (
 
 type Tank struct {
 	Object
+	IsPlayer   bool
 	ShotsFired int
 	Cooldown   int
 }
@@ -15,7 +16,13 @@ func NewTank(x, y int) *Tank {
 		ShotsFired: 0,
 		Cooldown:   ShootCooldown,
 	}
-	tank.Direction = Up
+
+	if y > BoxBottom/2 {
+		tank.Direction = Up
+	} else {
+		tank.Direction = Down
+	}
+
 	tankStyle := tcell.StyleDefault.Foreground(tcell.ColorDarkGreen)
 
 	for dy := 0; dy < 3; dy++ {

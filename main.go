@@ -46,8 +46,13 @@ func main() {
 	}
 	defer quit()
 
-	tank := NewTank(11, 17)
-	tank.Draw(box.Screen)
+	playerTank := NewTank(11, 17)
+	playerTank.IsPlayer = true
+	playerTank.Draw(box.Screen)
+
+	npcTank := NewTank(36, 2)
+	npcTank.Draw(box.Screen)
+
 	projectiles := make(chan *Projectile, MaxProjectiles)
 
 	quitCh := make(chan struct{})
@@ -70,31 +75,31 @@ func main() {
 				} else if ev.Rune() == 'C' || ev.Rune() == 'c' {
 					box.Screen.Clear()
 				} else if ev.Rune() == 'H' || ev.Rune() == 'h' {
-					tank.Direction = Left
-					tank.Move(box)
+					playerTank.Direction = Left
+					playerTank.Move(box)
 				} else if ev.Rune() == 'J' || ev.Rune() == 'j' {
-					tank.Direction = Down
-					tank.Move(box)
+					playerTank.Direction = Down
+					playerTank.Move(box)
 				} else if ev.Rune() == 'K' || ev.Rune() == 'k' {
-					tank.Direction = Up
-					tank.Move(box)
+					playerTank.Direction = Up
+					playerTank.Move(box)
 				} else if ev.Rune() == 'L' || ev.Rune() == 'l' {
-					tank.Direction = Right
-					tank.Move(box)
+					playerTank.Direction = Right
+					playerTank.Move(box)
 				} else if ev.Rune() == ' ' {
-					projectile := tank.Shoot()
+					projectile := playerTank.Shoot()
 
 					if projectile != nil {
 						select {
 						case projectiles <- projectile:
-							tank.ShotsFired++
+							playerTank.ShotsFired++
 						default:
 							projectile = nil
 						}
 					}
 				}
 
-				tank.Draw(box.Screen)
+				playerTank.Draw(box.Screen)
 				box.Screen.Show()
 			}
 
@@ -119,7 +124,7 @@ func main() {
 					ammoRack = ammoRack[i:]
 				}
 			}
-			tank.Draw(box.Screen)
+			playerTank.Draw(box.Screen)
 			box.Screen.Show()
 
 		case <-quitCh:
