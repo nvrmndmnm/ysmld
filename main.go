@@ -46,12 +46,9 @@ func main() {
 	}
 	defer quit()
 
-	playerTank := NewTank(11, 17)
+	playerTank := NewTank(23, 9)
 	playerTank.IsPlayer = true
 	playerTank.Draw(box.Screen)
-
-	npcTank := NewTank(36, 2)
-	npcTank.Draw(box.Screen)
 
 	projectiles := make(chan *Projectile, MaxProjectiles)
 
@@ -105,6 +102,8 @@ func main() {
 
 		}
 	}()
+
+	go spawn(box)
 
 	var ammoRack []*Projectile
 	ticker := time.NewTicker(ProjectileSpeed * time.Millisecond)
