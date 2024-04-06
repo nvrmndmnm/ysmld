@@ -40,3 +40,14 @@ func spawn(box *Box) {
 		}
 	}
 }
+
+func despawn(tank *Tank, box *Box) {
+    for i, npcTank := range npcTanks {
+        if npcTank == tank {
+            npcTanks = append(npcTanks[:i], npcTanks[i+1:]...)
+            tank.Clear(box)
+
+            break
+        }
+    }
+}
