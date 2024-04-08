@@ -117,6 +117,16 @@ func main() {
 					ammoRack[i].Pixels[0].Y <= BoxBottom &&
 					ammoRack[i].Pixels[0].X >= BoxLeft &&
 					ammoRack[i].Pixels[1].X <= BoxRight {
+
+					for _, npcTank := range npcTanks {
+						if npcTank.Pixels[0].X == ammoRack[i].Pixels[0].X &&
+							npcTank.Pixels[0].Y == ammoRack[i].Pixels[0].Y {
+							npcTank.Clear(box)
+							despawn(npcTank, box)
+							break
+						}
+					}
+
 					ammoRack[i].Move(box)
 					ammoRack[i].Draw(box.Screen)
 				} else {

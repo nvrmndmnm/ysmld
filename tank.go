@@ -29,7 +29,7 @@ func NewTank(x, y int) *Tank {
 		for dx := 0; dx < 6; dx++ {
 			tank.Pixels = append(tank.Pixels, &Pixel{X: x + dx, Y: y + dy, Style: tankStyle})
 		}
-	}
+	} 
 
 	tank.moveTurret(x, y, tankStyle)
 
