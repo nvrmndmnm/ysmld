@@ -51,3 +51,14 @@ func despawn(tank *Tank, box *Box) {
         }
     }
 }
+
+func isHit(tank *Tank, ammo *Projectile) bool {
+    for _, tankPixel := range tank.Pixels {
+        for _, ammoPixel := range ammo.Pixels {
+            if tankPixel.X == ammoPixel.X && tankPixel.Y == ammoPixel.Y {
+                return true
+            }
+        }
+    }
+    return false
+}

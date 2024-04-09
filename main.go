@@ -119,8 +119,7 @@ func main() {
 					ammoRack[i].Pixels[1].X <= BoxRight {
 
 					for _, npcTank := range npcTanks {
-						if npcTank.Pixels[0].X == ammoRack[i].Pixels[0].X &&
-							npcTank.Pixels[0].Y == ammoRack[i].Pixels[0].Y {
+						if isHit(npcTank, ammoRack[i]) {
 							npcTank.Clear(box)
 							despawn(npcTank, box)
 							break
