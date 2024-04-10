@@ -34,7 +34,7 @@ func spawn(box *Box) {
 			x, y, ok := getSpawnPoint()
 			if ok {
 				npcTank := NewTank(x, y)
-				npcTank.Draw(box.Screen)
+				npcTank.Draw(box)
 				npcTanks = append(npcTanks, npcTank)
 			}
 		}

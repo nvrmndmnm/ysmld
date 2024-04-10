@@ -21,8 +21,14 @@ type Object struct {
 	Direction Direction
 }
 
-func (g *Object) Draw(s tcell.Screen) {
+func (g *Object) Draw(box *Box) {
 	for i, pixel := range g.Pixels {
-		pixel.Draw(s, i)
+		pixel.Draw(box.Screen, i)
+	}
+}
+
+func (g *Object) Clear(box *Box) {
+	for _, pixel := range g.Pixels {
+		box.Screen.SetContent(pixel.X, pixel.Y, ' ', nil, box.Style)
 	}
 }

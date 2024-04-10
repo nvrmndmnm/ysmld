@@ -129,8 +129,3 @@ func (t *Tank) Shoot() *Projectile {
 	return NewProjectile(x, y, t.Direction)
 }
 
-func (t *Tank) Clear(box *Box) {
-	for _, pixel := range t.Pixels {
-		box.Screen.SetContent(pixel.X, pixel.Y, ' ', nil, box.Style)
-	}
-}

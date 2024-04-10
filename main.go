@@ -48,7 +48,7 @@ func main() {
 
 	playerTank := NewTank(23, 9)
 	playerTank.IsPlayer = true
-	playerTank.Draw(box.Screen)
+	playerTank.Draw(box)
 
 	projectiles := make(chan *Projectile, MaxProjectiles)
 
@@ -96,7 +96,7 @@ func main() {
 					}
 				}
 
-				playerTank.Draw(box.Screen)
+				playerTank.Draw(box)
 				box.Screen.Show()
 			}
 
@@ -113,10 +113,10 @@ func main() {
 			ammoRack = append(ammoRack, projectile)
 		case <-ticker.C:
 			for i := 0; i < len(ammoRack) && i < MaxProjectiles; i++ {
-				if ammoRack[i].Pixels[0].Y >= BoxTop &&
-					ammoRack[i].Pixels[0].Y <= BoxBottom &&
-					ammoRack[i].Pixels[0].X >= BoxLeft &&
-					ammoRack[i].Pixels[1].X <= BoxRight {
+				if ammoRack[i].Pixels[0].Y > BoxTop &&
+					ammoRack[i].Pixels[0].Y < BoxBottom &&
+					ammoRack[i].Pixels[0].X > BoxLeft+1 &&
+					ammoRack[i].Pixels[1].X < BoxRight-1 {
 
 					for _, npcTank := range npcTanks {
 						if isHit(npcTank, ammoRack[i]) {
@@ -127,12 +127,13 @@ func main() {
 					}
 
 					ammoRack[i].Move(box)
-					ammoRack[i].Draw(box.Screen)
+					ammoRack[i].Draw(box)
 				} else {
+					ammoRack[i].Clear(box)
 					ammoRack = ammoRack[i:]
 				}
 			}
-			playerTank.Draw(box.Screen)
+			playerTank.Draw(box)
 			box.Screen.Show()
 
 		case <-quitCh:
