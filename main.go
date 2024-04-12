@@ -112,7 +112,7 @@ func main() {
 		case projectile := <-projectiles:
 			ammoRack = append(ammoRack, projectile)
 		case <-ticker.C:
-			for i := 0; i < len(ammoRack) && i < MaxProjectiles; i++ {
+			for i := len(ammoRack) - 1; i >= 0; i-- {
 				if ammoRack[i].Pixels[0].Y > BoxTop &&
 					ammoRack[i].Pixels[0].Y < BoxBottom &&
 					ammoRack[i].Pixels[0].X > BoxLeft+1 &&
@@ -120,19 +120,24 @@ func main() {
 
 					for _, npcTank := range npcTanks {
 						if isHit(npcTank, ammoRack[i]) {
-							npcTank.Clear(box)
+							ammoRack[i].Clear(box)
+							ammoRack = append(ammoRack[:i], ammoRack[i+1:]...)
+
 							despawn(npcTank, box)
 							break
 						}
 					}
 
-					ammoRack[i].Move(box)
-					ammoRack[i].Draw(box)
+					if i < len(ammoRack) {
+						ammoRack[i].Move(box)
+						ammoRack[i].Draw(box)
+					}
 				} else {
 					ammoRack[i].Clear(box)
-					ammoRack = ammoRack[i:]
+					ammoRack = append(ammoRack[:i], ammoRack[i+1:]...)
 				}
 			}
+
 			playerTank.Draw(box)
 			box.Screen.Show()
 
