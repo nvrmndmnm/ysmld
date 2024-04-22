@@ -10,7 +10,7 @@ const (
 )
 
 const (
-	BoxLeft   = 10
+	BoxLeft   = 11
 	BoxTop    = 1
 	BoxRight  = 42
 	BoxBottom = 20
