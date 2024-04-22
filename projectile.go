@@ -44,12 +44,12 @@ func (p *Projectile) Move(box *Box) {
 			return
 		}
 	case Left:
-		dx = -1
+		dx = -2
 		if p.Pixels[0].X < BoxLeft {
 			return
 		}
 	case Right:
-		dx = 1
+		dx = 2
 		if p.Pixels[1].X > BoxRight {
 			return
 		}
@@ -100,9 +100,9 @@ func handleAmmo(box *Box, playerTank *Tank, projectiles chan *Projectile, quitCh
 			playerTank.Draw(box)
 			box.Screen.Show()
 
-			case <-quitCh:
-				ticker.Stop()
-				return
+		case <-quitCh:
+			ticker.Stop()
+			return
 		}
 	}
 }
