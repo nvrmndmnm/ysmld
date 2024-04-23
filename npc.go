@@ -42,23 +42,24 @@ func spawn(box *Box) {
 }
 
 func despawn(tank *Tank, box *Box) {
-    for i, npcTank := range npcTanks {
-        if npcTank == tank {
-            npcTanks = append(npcTanks[:i], npcTanks[i+1:]...)
-            tank.Clear(box)
+	for i, npcTank := range npcTanks {
+		if npcTank == tank {
+			spawnPoints = append(spawnPoints, [2]int{tank.Pixels[0].X, tank.Pixels[0].Y})
+			npcTanks = append(npcTanks[:i], npcTanks[i+1:]...)
+			tank.Clear(box)
 
-            break
-        }
-    }
+			break
+		}
+	}
 }
 
 func isHit(tank *Tank, ammo *Projectile) bool {
-    for _, tankPixel := range tank.Pixels {
-        for _, ammoPixel := range ammo.Pixels {
-            if tankPixel.X == ammoPixel.X && tankPixel.Y == ammoPixel.Y {
-                return true
-            }
-        }
-    }
-    return false
+	for _, tankPixel := range tank.Pixels {
+		for _, ammoPixel := range ammo.Pixels {
+			if tankPixel.X == ammoPixel.X && tankPixel.Y == ammoPixel.Y {
+				return true
+			}
+		}
+	}
+	return false
 }
