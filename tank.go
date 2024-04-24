@@ -6,7 +6,6 @@ import (
 
 type Tank struct {
 	Object
-	IsPlayer   bool
 	ShotsFired int
 	Cooldown   int
 }

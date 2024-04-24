@@ -63,3 +63,13 @@ func isHit(tank *Tank, ammo *Projectile) bool {
 	}
 	return false
 }
+
+func fire() {
+	ticker := time.NewTicker(1 * time.Second)
+
+	for range ticker.C {
+		for _, tank := range npcTanks {
+			tank.Shoot()
+		}
+	}
+}

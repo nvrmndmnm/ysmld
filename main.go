@@ -51,6 +51,7 @@ func main() {
 	go runGame(box, playerTank, projectiles, quitCh)
 
 	go spawn(box)
+	go fire()
 
 	handleAmmo(box, playerTank, projectiles, quitCh)
 }

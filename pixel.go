@@ -17,6 +17,7 @@ func (p *Pixel) Draw(s tcell.Screen, i int) {
 type Object struct {
 	Pixels    []*Pixel
 	Direction Direction
+	IsPlayer   bool
 }
 
 func (g *Object) Draw(box *Box) {
