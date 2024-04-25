@@ -5,13 +5,28 @@ import (
 	"time"
 )
 
-var npcTanks []*Tank
+type NPCTank struct {
+	Tank
+}
+
+var npcTanks []*NPCTank
 
 var spawnPoints = [][2]int{
 	{BoxLeft + 1, BoxTop + 1},
 	{BoxRight - 6, BoxTop + 1},
 	{BoxLeft + 1, BoxBottom - 3},
 	{BoxRight - 6, BoxBottom - 3},
+}
+
+func NewNPCTank(x, y int) *NPCTank {
+	tank := NewTank(x, y)
+	tank.IsNPC = true
+	
+	npcTank := &NPCTank{
+		Tank: *tank,
+	}
+
+	return npcTank
 }
 
 func getSpawnPoint() (int, int, bool) {
@@ -33,15 +48,16 @@ func spawn(box *Box) {
 		if len(npcTanks) < 4 {
 			x, y, ok := getSpawnPoint()
 			if ok {
-				npcTank := NewTank(x, y)
+				npcTank := NewNPCTank(x, y)
 				npcTank.Draw(box)
 				npcTanks = append(npcTanks, npcTank)
+				go npcTank.Attack()
 			}
 		}
 	}
 }
 
-func despawn(tank *Tank, box *Box) {
+func despawn(tank *NPCTank, box *Box) {
 	for i, npcTank := range npcTanks {
 		if npcTank == tank {
 			spawnPoints = append(spawnPoints, [2]int{tank.Pixels[0].X, tank.Pixels[0].Y})
@@ -53,7 +69,7 @@ func despawn(tank *Tank, box *Box) {
 	}
 }
 
-func isHit(tank *Tank, ammo *Projectile) bool {
+func isHit(tank *NPCTank, ammo *Projectile) bool {
 	for _, tankPixel := range tank.Pixels {
 		for _, ammoPixel := range ammo.Pixels {
 			if tankPixel.X == ammoPixel.X && tankPixel.Y == ammoPixel.Y {
@@ -64,7 +80,7 @@ func isHit(tank *Tank, ammo *Projectile) bool {
 	return false
 }
 
-func fire() {
+func (t *NPCTank) Attack() {
 	ticker := time.NewTicker(1 * time.Second)
 
 	for range ticker.C {

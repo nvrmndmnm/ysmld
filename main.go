@@ -41,7 +41,6 @@ func main() {
 	defer quit()
 
 	playerTank := NewTank(23, 9)
-	playerTank.IsPlayer = true
 	playerTank.Draw(box)
 
 	projectiles := make(chan *Projectile, MaxProjectiles)
@@ -51,7 +50,6 @@ func main() {
 	go runGame(box, playerTank, projectiles, quitCh)
 
 	go spawn(box)
-	go fire()
 
 	handleAmmo(box, playerTank, projectiles, quitCh)
 }
